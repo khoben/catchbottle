@@ -44,9 +44,9 @@ public abstract class GameMap {
     public void resetEntities() {
 
         entities.clear();
-        player.create(EntityType.PLAYER,new Vector2(505,464),this);
+        player.create(EntityType.PLAYER,new Vector2(470,464),this);
 
-        bottleX = rand.nextInt(750-560)+560;
+        bottleX = rand.nextInt(1000-560)+560;
         bottle.create(EntityType.BOTTLE,new Vector2(bottleX,464),this);
 
         entities.add(player);
@@ -96,6 +96,7 @@ public abstract class GameMap {
     }
 
     public boolean doesPlayerCollideWithBottle(Player player,Bottle bottle) {
+
         Vector2 playerPos = player.getPos();
         float playerW = player.getWidth();
         float playerH = player.getHeight();

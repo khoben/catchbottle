@@ -14,7 +14,6 @@ public abstract class Entity {
     protected float velocityY = 0;
     protected GameMap map;
     protected boolean grounded = false;
-    public boolean isJumped;
 
     protected IJumpAction jumpAction;
     protected IMoveAction moveAction;
@@ -22,7 +21,6 @@ public abstract class Entity {
     public abstract void render (SpriteBatch batch);
 
     public void create (EntityType type, Vector2 pos, GameMap map) {
-        this.isJumped = false;
         this.pos = pos;
         this.type = type;
         this.map = map;
@@ -99,7 +97,5 @@ public abstract class Entity {
 
     public float getVelocityY() {return velocityY;}
     public void setVelocityY(float velocityY) {this.velocityY = velocityY;}
-
-    public boolean isJumped() {return isJumped;}
 
 }

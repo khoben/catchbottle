@@ -14,7 +14,7 @@ import java.util.HashMap;
 @SuppressWarnings("rawtypes")
 public enum EntityType {
 
-    PLAYER("player", Player.class, 49, 73, 40),
+    PLAYER("player", Player.class, 80, 110, 40),
     BOTTLE("bottle", Bottle.class, 14, 32, 40);
 
     private String id;

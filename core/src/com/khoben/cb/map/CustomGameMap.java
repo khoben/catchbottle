@@ -6,25 +6,18 @@ package com.khoben.cb.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-
-import com.khoben.cb.entities.Bottle;
 import com.khoben.cb.entities.Player;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import javax.print.DocFlavor;
-
 public class CustomGameMap extends GameMap{
+
 
     String id;
     String name;
@@ -34,22 +27,14 @@ public class CustomGameMap extends GameMap{
     BitmapFont font;
     int collectedBottles;
 
-    float deltaTime;
-
     public enum GameStatus{
         IN_PROGRESS,
         NEXT_LEVEL,
         ENDED
     }
 
-    public enum PlayerStatus{
-        ON_GROUND,
-        IN_AIR,
-        ACHIEVED
-    }
-
     GameStatus gameStatus;
-    PlayerStatus playerStatus;
+    GlyphLayout layout;
 
     private TextureRegion[][] tiles;
 
@@ -59,67 +44,21 @@ public class CustomGameMap extends GameMap{
         this.id = data.id;
         this.name = data.name;
         this.map = data.map;
-
         tiles = TextureRegion.split(new Texture("tiles.png"), TileType.TILE_SIZE, TileType.TILE_SIZE);
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 50;
+        parameter.size = 30;
         parameter.color = Color.WHITE;
         parameter.borderColor = Color.BLACK;
-        parameter.borderWidth = 3;
+        parameter.borderWidth = 2;
         font = generator.generateFont(parameter);
         collectedBottles = 0;
         gameStatus = GameStatus.IN_PROGRESS;
-        playerStatus = PlayerStatus.ON_GROUND;
+        this.player.playerState = Player.PlayerState.STAND_R;
     }
 
     @Override
     public void render(OrthographicCamera camera, SpriteBatch batch) {
-
-        if (gameStatus == GameStatus.NEXT_LEVEL)
-        {
-            gameStatus = GameStatus.IN_PROGRESS;
-            this.resetEntities();
-        }else if(gameStatus == GameStatus.ENDED)
-        {
-            this.collectedBottles = 0;
-            gameStatus = GameStatus.IN_PROGRESS;
-            this.resetEntities();
-        }
-
-        // in air
-        if (!this.player.isGrounded()&&this.player.isJumped()&&playerStatus!=PlayerStatus.ACHIEVED)
-        {
-            playerStatus = PlayerStatus.IN_AIR;
-            System.out.println("air");
-        }
-
-        if(playerStatus == PlayerStatus.ACHIEVED)
-        {
-            playerStatus = PlayerStatus.ON_GROUND;
-        }
-
-        //before grounded should catch bottle
-        if (playerStatus == PlayerStatus.IN_AIR)
-        {
-            // on bottle
-            if (this.entities.size()>1)
-            {
-                if (this.doesPlayerCollideWithBottle(this.player, this.bottle)){
-                    collectedBottles++;
-                    gameStatus = GameStatus.NEXT_LEVEL;
-                    playerStatus = PlayerStatus.ACHIEVED;
-                    this.entities.remove(1);
-                }
-                else if(this.player.isGrounded())
-                {
-                    System.out.println("ground");
-                    playerStatus = PlayerStatus.ON_GROUND;
-                    gameStatus = GameStatus.ENDED;
-                }
-            }
-
-        }
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -133,8 +72,8 @@ public class CustomGameMap extends GameMap{
                 }
             }
         }
-
-        font.draw(batch,"Bottles collected: "+collectedBottles,200,camera.viewportHeight - parameter.size);
+        layout = new GlyphLayout(font,"Bottles collected: "+collectedBottles);
+        font.draw(batch,layout,camera.viewportWidth - layout.width ,camera.viewportHeight - layout.height);
         super.render(camera, batch);
 
         batch.end();
@@ -143,28 +82,95 @@ public class CustomGameMap extends GameMap{
     @Override
     public void update(float delta) {
 
-        if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP) && player.isGrounded())) {
+        if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP))) {
             float velocityY = player.getVelocityY();
             velocityY += player.JUMP_VELOCITY * player.getWeight();
             player.performJump(velocityY);
-            player.isJumped = true;
         }
         else if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP) ) && !player.isGrounded() && player.getVelocityY() > 0) {
             float velocityY = player.getVelocityY();
             velocityY += player.JUMP_VELOCITY * player.getWeight() * delta;
             player.performJump(velocityY);
-            player.isJumped = true;
+        }
+
+        if (player.getVelocityY() > 0) {
+            player.playerState = Player.PlayerState.JUMP;
+        }else
+        if (player.getVelocityY() == 0) {
+            if (player.direction == true)
+                player.playerState = Player.PlayerState.STAND_R;
+            else
+                player.playerState = Player.PlayerState.STAND_L;
         }
 
         super.update(delta);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            player.performMove(-player.SPEED * delta);
+        checkGameState();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            player.performMove(-player.SPEED * delta);
+            if (player.isGrounded()) {
+                player.playerState = Player.PlayerState.MOVE_LEFT;
+                player.direction = false;
+            }
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             player.performMove(player.SPEED * delta);
+            if (player.isGrounded()) {
+                player.playerState = Player.PlayerState.MOVE_RIGHT;
+                player.direction = true;
+            }
+        }
+
     }
 
+    public void checkGameState()
+    {
+        if (gameStatus == GameStatus.NEXT_LEVEL)
+        {
+            this.player.playerState = Player.PlayerState.ACHIEVED;
+            gameStatus = GameStatus.IN_PROGRESS;
+            this.resetEntities();
+        }else if(gameStatus == GameStatus.ENDED)
+        {
+            this.collectedBottles = 0;
+            gameStatus = GameStatus.IN_PROGRESS;
+            this.resetEntities();
+        }
+
+        // in air
+        if (!this.player.isGrounded()&&this.player.playerState!= Player.PlayerState.ACHIEVED && this.player.getVelocityY()<0) {
+            this.player.playerState = Player.PlayerState.FALL;
+        }
+
+        if(this.player.playerState == Player.PlayerState.ACHIEVED)
+        {
+            player.playerState = Player.PlayerState.STAND_R;
+        }
+
+        //before grounded should catch bottle
+        if (this.player.playerState == Player.PlayerState.FALL)
+        {
+            // on bottle
+            if (this.entities.size()>1)
+            {
+
+                if (this.doesPlayerCollideWithBottle(this.player, this.bottle)){
+                    collectedBottles++;
+                    gameStatus = GameStatus.NEXT_LEVEL;
+                    this.player.playerState = Player.PlayerState.ACHIEVED;
+                    this.entities.remove(1);
+                }
+                else if(this.player.isGrounded())
+                {
+                    this.player.playerState = Player.PlayerState.STAND_R;
+                    gameStatus = GameStatus.ENDED;
+                }
+            }
+
+        }
+    }
     @Override
     public void dispose() {}
 

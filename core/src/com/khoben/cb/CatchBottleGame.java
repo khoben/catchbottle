@@ -7,17 +7,23 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.khoben.cb.map.CustomGameMap;
 import com.khoben.cb.map.GameMap;
+import com.khoben.cb.screens.GameScreen;
 import com.khoben.cb.screens.MenuScreen;
 
 
 public class CatchBottleGame extends Game {
 
 	public SpriteBatch batch;
+	public MenuScreen menuScreen;
+	public GameScreen gameScreen;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		this.setScreen(new MenuScreen(this));
+		menuScreen = new MenuScreen(this);
+		gameScreen = new GameScreen(this);
+		Gdx.graphics.setTitle("CatchBottle Game");
+		this.setScreen(menuScreen);
 	}
 
 	@Override

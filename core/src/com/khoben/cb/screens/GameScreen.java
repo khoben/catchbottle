@@ -2,23 +2,27 @@ package com.khoben.cb.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.math.Vector3;
 import com.khoben.cb.CatchBottleGame;
 import com.khoben.cb.map.CustomGameMap;
+import com.khoben.cb.screens.Button.MyButton;
 
 
 /**
  * Created by extle on 01.10.2017.
  */
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, InputProcessor {
 
     final CatchBottleGame game;
     SpriteBatch batch;
@@ -35,7 +39,7 @@ public class GameScreen implements Screen {
 
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
-    int countBottles;
+
 
     public enum State{
         Running,
@@ -43,6 +47,8 @@ public class GameScreen implements Screen {
     }
 
     State state = State.Running;
+
+    MyButton menuButton;
 
 
     public GameScreen (CatchBottleGame game) {
@@ -52,6 +58,7 @@ public class GameScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
+
         camera.update();
 
         gameMap = new CustomGameMap();
@@ -65,11 +72,13 @@ public class GameScreen implements Screen {
         font = generator.generateFont(parameter);
         layout = new  GlyphLayout(font,TAP_PLAY);
         fontW = layout.width;
+
+        menuButton = new MyButton("menu.png",w/2 - 175/2, h-78, 175,75);
     }
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(this);
     }
 
 
@@ -94,6 +103,9 @@ public class GameScreen implements Screen {
             camera.update();
             gameMap.update(Gdx.graphics.getDeltaTime());
             gameMap.render(camera, batch);
+            game.batch.begin();
+            menuButton.draw(game.batch);
+            game.batch.end();
         }
         else {
             game.batch.begin();
@@ -119,7 +131,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-
+        Gdx.input.setInputProcessor(null);
     }
 
     public void dispose () {
@@ -127,5 +139,59 @@ public class GameScreen implements Screen {
         gameMap.dispose();
     }
 
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
 
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Vector3 tmp = new Vector3(screenX, screenY, 0);
+        camera.unproject(tmp);
+
+        if (menuButton.wasClicked(tmp.x,tmp.y))
+        {
+            game.setScreen(game.menuScreen);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        Vector3 tmp = new Vector3(screenX, screenY, 0);
+        camera.unproject(tmp);
+        if (menuButton.wasClicked(tmp.x,tmp.y))
+        {
+            Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
+        }
+        else{
+            Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
 }

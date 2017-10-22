@@ -5,9 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.khoben.cb.entities.behavour.IJumpAction;
 import com.khoben.cb.entities.behavour.IMoveAction;
 import com.khoben.cb.map.GameMap;
+import com.khoben.cb.patterns.Composite.Component;
 
 
-public abstract class Entity {
+public abstract class Entity implements Component {
 
     protected Vector2 pos;
     protected EntityType type;

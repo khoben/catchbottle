@@ -21,6 +21,11 @@ public class Player extends Entity {
     public static final float SPEED = 80;
     public static final float JUMP_VELOCITY = 5;
 
+    @Override
+    public void operation() {
+
+    }
+
     public enum PlayerState{
         STAND_R,
         STAND_L,

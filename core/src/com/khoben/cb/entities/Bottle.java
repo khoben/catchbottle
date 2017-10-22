@@ -28,4 +28,9 @@ public class Bottle extends Entity {
     public void render(SpriteBatch batch) {
         batch.draw(image, pos.x, pos.y, getWidth(), getHeight());
     }
+
+    @Override
+    public void operation() {
+
+    }
 }

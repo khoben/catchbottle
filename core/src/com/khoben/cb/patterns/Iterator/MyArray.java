@@ -8,13 +8,12 @@ import java.util.ArrayList;
  * Created by extless on 22.10.2017.
  */
 
-public class MyArray<T> implements IArray {
+public class MyArray<T>  {
 
     ArrayList<T> objects;
 
-    public MyArray(ArrayList<T> objects) {
+    public MyArray() {
         objects = new ArrayList<T>();
-        this.objects = objects;
     }
 
     public void add(T o){
@@ -25,9 +24,18 @@ public class MyArray<T> implements IArray {
         objects.remove(o);
     }
 
-    @Override
-    public Iterator getIterator() {
-        return new MyIterator(objects);
+    public void clear(){objects.clear();}
+
+    public int size(){
+        return objects.size();
+    }
+
+    public void remove(int idx){
+        objects.remove(idx);
+    }
+
+    public MyIterator<T> getMyIterator() {
+        return new MyIterator<T>(objects);
     }
 
 

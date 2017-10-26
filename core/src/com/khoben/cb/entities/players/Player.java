@@ -1,10 +1,12 @@
-package com.khoben.cb.entities;
+package com.khoben.cb.entities.players;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+import com.khoben.cb.entities.Entity;
+import com.khoben.cb.entities.EntityType;
 import com.khoben.cb.entities.behavour.CanJump;
 import com.khoben.cb.entities.behavour.CanMove;
 import com.khoben.cb.map.GameMap;
@@ -21,10 +23,6 @@ public class Player extends Entity {
     public static final float SPEED = 80;
     public static final float JUMP_VELOCITY = 5;
 
-    @Override
-    public void operation() {
-
-    }
 
     public enum PlayerState{
         STAND_R,

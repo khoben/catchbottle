@@ -1,10 +1,5 @@
 package com.khoben.cb.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
-import com.khoben.cb.map.GameMap;
-
 import java.util.HashMap;
 
 /**
@@ -14,8 +9,10 @@ import java.util.HashMap;
 @SuppressWarnings("rawtypes")
 public enum EntityType {
 
-    PLAYER("player", Player.class, 80, 110, 40),
-    BOTTLE("bottle", Bottle.class, 14, 32, 40);
+    PLAYER("player", com.khoben.cb.entities.players.Player.class, 80, 110, 40),
+    MIDBOTTLE("bottle", com.khoben.cb.entities.bottles.Bottle.class, 14, 32, 40),
+    SMALLBOTTLE("bottle", com.khoben.cb.entities.bottles.Bottle.class, 7, 16, 40),
+    BIGBOTTLE("bottle", com.khoben.cb.entities.bottles.Bottle.class, 28,64, 40);
 
     private String id;
     private Class loaderClass;

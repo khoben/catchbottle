@@ -1,18 +1,22 @@
 package com.khoben.cb.map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.khoben.cb.entities.Bottle;
+import com.khoben.cb.entities.bottles.BigBottle;
+import com.khoben.cb.entities.bottles.Bottle;
 import com.khoben.cb.entities.Entity;
 import com.khoben.cb.entities.EntityType;
-import com.khoben.cb.entities.Player;
+import com.khoben.cb.entities.players.Player;
+import com.khoben.cb.entities.bottles.SmallBottle;
+import com.khoben.cb.patterns.Adapter.Adapter;
+import com.khoben.cb.patterns.Composite.Composite;
+import com.khoben.cb.patterns.Iterator.IArray;
+import com.khoben.cb.patterns.Iterator.MyIterator;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -22,50 +26,67 @@ import java.util.Random;
 
 public abstract class GameMap {
 
-    protected ArrayList<Entity> entities;
+    protected IArray<Entity> entities;
     protected Player player;
-    protected Bottle bottle;
-
+    protected BigBottle bottle;
     float bottleX;
     Random rand;
+    Composite bottleComposite;
+    Composite mainComposite;
 
 
     public GameMap() {
         player = new Player();
-        bottle = new Bottle();
+        bottle = new BigBottle();
 
-        entities = new ArrayList<Entity>();
-
+        //TODO: Adapter
+        entities = new Adapter<Entity>();
+        bottleComposite = new Composite();
+        mainComposite = new Composite();
         rand = new Random(System.currentTimeMillis());
-        //TODO: ADD ENTITIES
         resetEntities();
     }
 
     public void resetEntities() {
-
+        mainComposite.components.clear();
+        mainComposite.clear();
         entities.clear();
         player.create(EntityType.PLAYER,new Vector2(470,464),this);
 
         bottleX = rand.nextInt(1000-560)+560;
-        bottle.create(EntityType.BOTTLE,new Vector2(bottleX,464),this);
+        bottle.create(new Vector2(bottleX,464),this);
+        bottle.createPackBottles();
+
+        bottleComposite.add(bottle.getPack());
+
+        mainComposite.add(bottle);
+        mainComposite.add(bottleComposite);
+
+//        System.out.println(mainComposite.components.size());
+//        System.out.println(bottleComposite.components.size());
 
         entities.add(player);
-        entities.add(bottle);
     }
 
     public void render (OrthographicCamera camera, SpriteBatch batch) {
+        //TODO: Iterator
 
-        for( Entity e : entities)
+        MyIterator<Entity> it = entities.getIterator();
+        while (it.hasNext())
         {
-            e.render(batch);
+           it.next().render(batch);
         }
+        mainComposite.render(batch);
     }
 
     public void update (float delta) {
-        for( Entity e : entities)
+
+        MyIterator<Entity> it = entities.getIterator();
+        while (it.hasNext())
         {
-            e.update(delta, -9.8f);
+            it.next().update(delta, -9.8f);
         }
+        mainComposite.update(delta,-9.8f);
     }
 
     public void dispose () {
@@ -95,28 +116,25 @@ public abstract class GameMap {
         return false;
     }
 
-    public boolean doesPlayerCollideWithBottle(Player player,Bottle bottle) {
-
-        Vector2 playerPos = player.getPos();
-        float playerW = player.getWidth();
-        float playerH = player.getHeight();
-
-        Vector2 bottlePos = bottle.getPos();
-        float bottleW = bottle.getWidth();
-        float bottleH = bottle.getHeight();
-
-        Rectangle playerRec = new Rectangle(playerPos.x,playerPos.y,playerW,playerH);
-        Rectangle bottleRec = new Rectangle(bottlePos.x,bottlePos.y,bottleW,bottleH);
-
-        if (Intersector.overlaps(playerRec,bottleRec))
-        {
-            return true;
-        }
-        return false;
-
-
-
-    }
+//    public boolean doesPlayerCollideWithBottle(Player player,Bottle bottle) {
+//
+//        Vector2 playerPos = player.getPos();
+//        float playerW = player.getWidth();
+//        float playerH = player.getHeight();
+//
+//        Vector2 bottlePos = bottle.getPos();
+//        float bottleW = bottle.getWidth();
+//        float bottleH = bottle.getHeight();
+//
+//        Rectangle playerRec = new Rectangle(playerPos.x,playerPos.y,playerW,playerH);
+//        Rectangle bottleRec = new Rectangle(bottlePos.x,bottlePos.y,bottleW,bottleH);
+//
+//        if (Intersector.overlaps(playerRec,bottleRec))
+//        {
+//            return true;
+//        }
+//        return false;
+//    }
 
     public abstract int getWidth();
     public abstract int getHeight();
@@ -129,6 +147,5 @@ public abstract class GameMap {
     public int getPixelHeight() {
         return this.getHeight() * TileType.TILE_SIZE;
     }
-
 
 }

@@ -161,6 +161,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         if (menuButton.wasClicked(tmp.x,tmp.y))
         {
+
             game.setScreen(game.menuScreen);
         }
         return true;

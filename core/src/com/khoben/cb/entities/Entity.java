@@ -8,7 +8,7 @@ import com.khoben.cb.map.GameMap;
 import com.khoben.cb.patterns.Composite.Component;
 
 
-public abstract class Entity implements Component {
+public abstract class Entity{
 
     protected Vector2 pos;
     protected EntityType type;

@@ -86,16 +86,16 @@ public class MenuScreen implements Screen, InputProcessor {
         sourceX+=2;
         sourceY+=2;
 
-        if (fontdeltaY==5)
+        if (fontdeltaY>=5)
             upFont = false;
         else
-            if (fontdeltaY==-5)
+            if (fontdeltaY<=-5)
                 upFont = true;
 
         if (upFont == true)
-            fontdeltaY++;
+            fontdeltaY+=0.75;
         else
-            fontdeltaY--;
+            fontdeltaY-=0.75;
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();

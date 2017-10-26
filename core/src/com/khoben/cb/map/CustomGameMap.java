@@ -14,11 +14,14 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.khoben.cb.entities.Player;
+import com.khoben.cb.entities.bottles.Bottle;
+import com.khoben.cb.entities.bottles.Pair;
+import com.khoben.cb.entities.players.Player;
+import com.khoben.cb.patterns.Decorator.AmountCollectedBottles;
+import com.khoben.cb.patterns.Decorator.Decorator;
+import com.khoben.cb.patterns.Decorator.DecoratorTitleForCollectedBottles;
 
 public class CustomGameMap extends GameMap{
-
-
     String id;
     String name;
     int[][][] map;
@@ -26,6 +29,9 @@ public class CustomGameMap extends GameMap{
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     BitmapFont font;
     int collectedBottles;
+
+    Decorator decoratorForTitleCountBottles;
+    AmountCollectedBottles amountCollectedBottles;
 
     public enum GameStatus{
         IN_PROGRESS,
@@ -55,6 +61,8 @@ public class CustomGameMap extends GameMap{
         collectedBottles = 0;
         gameStatus = GameStatus.IN_PROGRESS;
         this.player.playerState = Player.PlayerState.STAND_R;
+        amountCollectedBottles = new AmountCollectedBottles();
+        decoratorForTitleCountBottles = new DecoratorTitleForCollectedBottles(amountCollectedBottles);
     }
 
     @Override
@@ -72,7 +80,9 @@ public class CustomGameMap extends GameMap{
                 }
             }
         }
-        layout = new GlyphLayout(font,"Bottles collected: "+collectedBottles);
+        //TODO: Decorator
+        amountCollectedBottles.SetAmount(collectedBottles);
+        layout = new GlyphLayout(font,decoratorForTitleCountBottles.getFinalString());
         font.draw(batch,layout,camera.viewportWidth - layout.width ,camera.viewportHeight - layout.height);
         super.render(camera, batch);
 
@@ -131,11 +141,13 @@ public class CustomGameMap extends GameMap{
         {
             this.player.playerState = Player.PlayerState.ACHIEVED;
             gameStatus = GameStatus.IN_PROGRESS;
+            this.mainComposite.clear();
             this.resetEntities();
         }else if(gameStatus == GameStatus.ENDED)
         {
             this.collectedBottles = 0;
             gameStatus = GameStatus.IN_PROGRESS;
+            this.mainComposite.clear();
             this.resetEntities();
         }
 
@@ -153,14 +165,13 @@ public class CustomGameMap extends GameMap{
         if (this.player.playerState == Player.PlayerState.FALL)
         {
             // on bottle
-            if (this.entities.size()>1)
+            if (this.mainComposite.components.size()>1)
             {
-
-                if (this.doesPlayerCollideWithBottle(this.player, this.bottle)){
-                    collectedBottles++;
+                Pair<Bottle,Boolean> check =  this.mainComposite.operation(this.player);
+                if (check.getRight()){
+                    collectedBottles+=check.getLeft().addPoints;
                     gameStatus = GameStatus.NEXT_LEVEL;
                     this.player.playerState = Player.PlayerState.ACHIEVED;
-                    this.entities.remove(1);
                 }
                 else if(this.player.isGrounded())
                 {

@@ -1,23 +1,21 @@
 package com.khoben.cb.patterns.Decorator;
 
-import com.khoben.cb.patterns.Composite.Component;
-
 /**
  * Created by extless on 22.10.2017.
  */
 
-public class Decorator implements Component{
+ public abstract class Decorator implements IAmountCollectedBottles{
 
-    Component component;
+    protected IAmountCollectedBottles component;
 
-    public Decorator(Component c) {
+    public Decorator(IAmountCollectedBottles c) {
         this.component = c;
     }
 
     @Override
-    public void operation() {
-        //decore
-        component.operation();
+    public String getFinalString() {
+        //TODO: Do decore bottle score
+        return component.getFinalString();
         //
     }
 }

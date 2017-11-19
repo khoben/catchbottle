@@ -1,5 +1,7 @@
 package com.khoben.cb.patterns.Bridge.FakeConsoleOutput;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.khoben.cb.entities.bottles.Bottle;
 
 import java.util.Scanner;
@@ -39,29 +41,20 @@ public class GameMapConsole {
 
     public void update() {
         // Input from player
-        Scanner scanner = new Scanner(System.in);
-        char input;
 
-        // The game logic starts here
-        boolean isRunning = true;
-
-        while (isRunning) {
-            screen.PrintScreen();
+        screen.PrintScreen();
             // Get input from player and do something
-            switch (input = scanner.nextLine().charAt(0)) {
-                case 'a':
-                    player.moveLeft(screen, player);
-                    break;
-                case 'd':
-                    player.moveRight(screen, player);
-                    break;
-                case 'w':
-                    player.moveUp(screen, player);
-                    break;
-                case 's':
-                    player.moveDown(screen, player);
-                    break;
-            }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+            player.moveLeft(screen, player);
         }
-    }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
+            player.moveRight(screen, player);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+            player.moveUp(screen, player);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
+            player.moveDown(screen, player);
+        }
+        }
 }

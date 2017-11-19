@@ -29,6 +29,7 @@ public class CustomGameMap extends GameMap{
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     BitmapFont font;
     int collectedBottles;
+    int countJumps;
 
     Decorator decoratorForTitleCountBottles;
     AmountCollectedBottles amountCollectedBottles;
@@ -59,10 +60,13 @@ public class CustomGameMap extends GameMap{
         parameter.borderWidth = 2;
         font = generator.generateFont(parameter);
         collectedBottles = 0;
+        countJumps = 0;
         gameStatus = GameStatus.IN_PROGRESS;
-        this.player.playerState = Player.PlayerState.STAND_R;
+        this.sEntities.player.playerState = Player.PlayerState.STAND_R;
         amountCollectedBottles = new AmountCollectedBottles();
         decoratorForTitleCountBottles = new DecoratorTitleForCollectedBottles(amountCollectedBottles);
+
+
     }
 
     @Override
@@ -93,24 +97,24 @@ public class CustomGameMap extends GameMap{
     public void update(float delta) {
 
         if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP))) {
-            float velocityY = player.getVelocityY();
-            velocityY += player.JUMP_VELOCITY * player.getWeight();
-            player.performJump(velocityY);
+            float velocityY = this.sEntities.player.getVelocityY();
+            velocityY += this.sEntities.player.JUMP_VELOCITY * this.sEntities.player.getWeight();
+            this.sEntities.player.performJump(velocityY);
         }
-        else if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP) ) && !player.isGrounded() && player.getVelocityY() > 0) {
-            float velocityY = player.getVelocityY();
-            velocityY += player.JUMP_VELOCITY * player.getWeight() * delta;
-            player.performJump(velocityY);
+        else if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP) ) && !this.sEntities.player.isGrounded() && this.sEntities.player.getVelocityY() > 0) {
+            float velocityY = this.sEntities.player.getVelocityY();
+            velocityY += this.sEntities.player.JUMP_VELOCITY * this.sEntities.player.getWeight() * delta;
+            this.sEntities.player.performJump(velocityY);
         }
 
-        if (player.getVelocityY() > 0) {
-            player.playerState = Player.PlayerState.JUMP;
+        if (this.sEntities.player.getVelocityY() > 0) {
+            this.sEntities.player.playerState = Player.PlayerState.JUMP;
         }else
-        if (player.getVelocityY() == 0) {
-            if (player.direction == true)
-                player.playerState = Player.PlayerState.STAND_R;
+        if (this.sEntities.player.getVelocityY() == 0) {
+            if (this.sEntities.player.direction == true)
+                this.sEntities.player.playerState = Player.PlayerState.STAND_R;
             else
-                player.playerState = Player.PlayerState.STAND_L;
+                this.sEntities.player.playerState = Player.PlayerState.STAND_L;
         }
 
         super.update(delta);
@@ -118,18 +122,18 @@ public class CustomGameMap extends GameMap{
         checkGameState();
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.performMove(-player.SPEED * delta);
-            if (player.isGrounded()) {
-                player.playerState = Player.PlayerState.MOVE_LEFT;
-                player.direction = false;
+            this.sEntities.player.performMove(-this.sEntities.player.SPEED * delta);
+            if (this.sEntities.player.isGrounded()) {
+                this.sEntities.player.playerState = Player.PlayerState.MOVE_LEFT;
+                this.sEntities.player.direction = false;
             }
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.performMove(player.SPEED * delta);
-            if (player.isGrounded()) {
-                player.playerState = Player.PlayerState.MOVE_RIGHT;
-                player.direction = true;
+            this.sEntities.player.performMove(this.sEntities.player.SPEED * delta);
+            if (this.sEntities.player.isGrounded()) {
+                this.sEntities.player.playerState = Player.PlayerState.MOVE_RIGHT;
+                this.sEntities.player.direction = true;
             }
         }
 
@@ -139,43 +143,43 @@ public class CustomGameMap extends GameMap{
     {
         if (gameStatus == GameStatus.NEXT_LEVEL)
         {
-            this.player.playerState = Player.PlayerState.ACHIEVED;
+            this.sEntities.player.playerState = Player.PlayerState.ACHIEVED;
             gameStatus = GameStatus.IN_PROGRESS;
-            this.mainComposite.clear();
+            this.sEntities.mainComposite.clear();
             this.resetEntities();
         }else if(gameStatus == GameStatus.ENDED)
         {
             this.collectedBottles = 0;
             gameStatus = GameStatus.IN_PROGRESS;
-            this.mainComposite.clear();
+            this.sEntities.mainComposite.clear();
             this.resetEntities();
         }
 
         // in air
-        if (!this.player.isGrounded()&&this.player.playerState!= Player.PlayerState.ACHIEVED && this.player.getVelocityY()<0) {
-            this.player.playerState = Player.PlayerState.FALL;
+        if (!this.sEntities.player.isGrounded()&&this.sEntities.player.playerState!= Player.PlayerState.ACHIEVED && this.sEntities.player.getVelocityY()<0) {
+            this.sEntities.player.playerState = Player.PlayerState.FALL;
         }
 
-        if(this.player.playerState == Player.PlayerState.ACHIEVED)
+        if(this.sEntities.player.playerState == Player.PlayerState.ACHIEVED)
         {
-            player.playerState = Player.PlayerState.STAND_R;
+            this.sEntities.player.playerState = Player.PlayerState.STAND_R;
         }
 
         //before grounded should catch bottle
-        if (this.player.playerState == Player.PlayerState.FALL)
+        if (this.sEntities.player.playerState == Player.PlayerState.FALL)
         {
             // on bottle
-            if (this.mainComposite.components.size()>1)
+            if (this.sEntities.mainComposite.components.size()>1)
             {
-                Pair<Bottle,Boolean> check =  this.mainComposite.operation(this.player);
+                Pair<Bottle,Boolean> check =  this.sEntities.mainComposite.operation(this.sEntities.player);
                 if (check.getRight()){
-                    collectedBottles+=check.getLeft().addPoints;
+                    collectedBottles+=check.getLeft().getPointsForBottle();
                     gameStatus = GameStatus.NEXT_LEVEL;
-                    this.player.playerState = Player.PlayerState.ACHIEVED;
+                    this.sEntities.player.playerState = Player.PlayerState.ACHIEVED;
                 }
-                else if(this.player.isGrounded())
+                else if(this.sEntities.player.isGrounded())
                 {
-                    this.player.playerState = Player.PlayerState.STAND_R;
+                    this.sEntities.player.playerState = Player.PlayerState.STAND_R;
                     gameStatus = GameStatus.ENDED;
                 }
             }

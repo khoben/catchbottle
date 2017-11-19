@@ -6,7 +6,9 @@ import com.khoben.cb.entities.players.Player;
 import com.khoben.cb.map.GameMap;
 import com.khoben.cb.patterns.Composite.Component;
 import com.khoben.cb.patterns.Composite.Composite;
+import com.khoben.cb.patterns.Flyweight.FlyweightFactory;
 
+import java.util.List;
 import java.util.Random;
 
 
@@ -18,9 +20,11 @@ public class BigBottle extends Bottle {
 
     Composite packForBigBottle;
     Random rand;
+    FlyweightFactory factoryBottles;
     public void create(Vector2 p, GameMap m)
     {
         packForBigBottle = new Composite();
+        factoryBottles = new FlyweightFactory(m);
         super.create(EntityType.BIGBOTTLE,p,m);
         rand = new Random(System.currentTimeMillis());
         addPoints = 1;
@@ -34,8 +38,16 @@ public class BigBottle extends Bottle {
 //        packForBigBottle.add(new MidBottle(this.getPos(),this.map));
 //        packForBigBottle.add(new SmallBottle(this.getPos(),this.map));
 
-        packForBigBottle.add(new MidBottle(new Vector2(rand.nextInt(1000-560)+560,464),this.map));
-        packForBigBottle.add(new SmallBottle(new Vector2(rand.nextInt(1000-560)+560,464),this.map));
+//        packForBigBottle.add(new MidBottle(new Vector2(rand.nextInt(1000-560)+560,464),this.map));
+//        packForBigBottle.add(new SmallBottle(new Vector2(rand.nextInt(1000-560)+560,464),this.map));
+
+        packForBigBottle.add(factoryBottles.getConcreteBottle("MidBottle").setParam(new Vector2(rand.nextInt(1000-560)+560,464)));
+        packForBigBottle.add(factoryBottles.getConcreteBottle("SmallBottle").setParam(new Vector2(rand.nextInt(1000-560)+560,464)));
+    }
+
+    @Override
+    public int getPointsForBottle() {
+        return addPoints;
     }
 
     public Component getPack(){

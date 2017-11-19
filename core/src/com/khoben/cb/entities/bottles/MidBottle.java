@@ -32,6 +32,7 @@ public class MidBottle extends Bottle {
         addPoints = 2;
         super.create(EntityType.MIDBOTTLE,p,m);
     }
+    public MidBottle(){};
     @Override
     public void createPackBottles() {
         packForMidBottle.components.clear();
@@ -39,6 +40,11 @@ public class MidBottle extends Bottle {
         for(int i=0; i<2; i++){
             packForMidBottle.add(new SmallBottle(new Vector2(rand.nextInt(1000-560)+560,464),this.map));
         }
+    }
+
+    @Override
+    public int getPointsForBottle() {
+        return addPoints;
     }
 
     public Component getPack(){
@@ -58,4 +64,5 @@ public class MidBottle extends Bottle {
     @Override
     public void clear() {
     }
+
 }

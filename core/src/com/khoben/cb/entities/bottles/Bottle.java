@@ -18,8 +18,8 @@ import com.khoben.cb.patterns.Composite.Component;
 
 public abstract class Bottle extends Entity implements Component {
 
-    Texture image;
-    public int addPoints;
+    private Texture image;
+    protected int addPoints;
 
     public Bottle(EntityType t, Vector2 p, GameMap m)
     {
@@ -47,6 +47,8 @@ public abstract class Bottle extends Entity implements Component {
 
     abstract public void createPackBottles();
 
+    abstract public int getPointsForBottle();
+
     public Pair<Bottle,Boolean> doesCollisionWhithPlayer(Player p){
         Vector2 playerPos = p.getPos();
         float playerW = p.getWidth();
@@ -69,5 +71,10 @@ public abstract class Bottle extends Entity implements Component {
     @Override
     public Pair<Bottle,Boolean> operation(Player p) {
         return doesCollisionWhithPlayer(p);
+    }
+
+    Bottle setParam(Vector2 p){
+        this.pos = p;
+        return this;
     }
 }

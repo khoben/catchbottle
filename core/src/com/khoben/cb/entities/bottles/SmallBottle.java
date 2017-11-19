@@ -28,6 +28,12 @@ public class SmallBottle extends Bottle {
     public void createPackBottles() {
 
     }
+    public SmallBottle(){};
+
+    @Override
+    public int getPointsForBottle() {
+        return addPoints;
+    }
 
     public Pair<Bottle,Boolean> doesCollisionWithPlayer(Player p) {
         return super.doesCollisionWhithPlayer(p);

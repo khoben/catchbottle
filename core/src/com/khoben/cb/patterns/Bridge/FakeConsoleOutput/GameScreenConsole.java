@@ -48,7 +48,7 @@ public class GameScreenConsole {
     }
 
     public char getObjectOnLocation(int x, int y) {
-        return this.screenMatrix[y][x];
+         return this.screenMatrix[y][x];
     }
 
     // Setters

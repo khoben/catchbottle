@@ -27,7 +27,7 @@ import java.util.Random;
 
 public abstract class GameMap {
 
-    SetupEntities sEntities;
+    public SetupEntities sEntities;
 
     public abstract int getWidth();
     public abstract int getHeight();

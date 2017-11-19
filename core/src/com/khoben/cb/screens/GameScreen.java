@@ -85,7 +85,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         menuButton = new MyButton("menu.png",w/2 - 175/2, h-78, 175,75);
         //TODO: Bridge here
-        fakeConsoleDrawable = new FakeConsoleDrawer();
+        fakeConsoleDrawable = new FakeConsoleDrawer(gameMap);
         normalDrawable = new NormalDrawer(state,game,batch,camera,gameMap,font,fontW,layout,h,menuButton);
         drawer = new Drawer(normalDrawable);
         selectDrawer = true;

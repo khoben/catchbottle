@@ -1,5 +1,6 @@
 package com.khoben.cb.patterns.Bridge;
 
+import com.khoben.cb.map.GameMap;
 import com.khoben.cb.patterns.Bridge.FakeConsoleOutput.GameMapConsole;
 import com.khoben.cb.patterns.Bridge.FakeConsoleOutput.GameScreenConsole;
 
@@ -8,7 +9,11 @@ import com.khoben.cb.patterns.Bridge.FakeConsoleOutput.GameScreenConsole;
  */
 
 public class FakeConsoleDrawer implements IDrawable{
-    GameMapConsole gameMapConsole = new GameMapConsole();
+    GameMapConsole gameMapConsole;
+    public FakeConsoleDrawer(GameMap map)
+    {
+        gameMapConsole = new GameMapConsole(map);
+    }
     @Override
     public void render() {
         gameMapConsole.update();

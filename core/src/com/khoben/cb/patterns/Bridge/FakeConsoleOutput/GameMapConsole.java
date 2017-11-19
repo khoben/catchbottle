@@ -2,9 +2,7 @@ package com.khoben.cb.patterns.Bridge.FakeConsoleOutput;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.khoben.cb.entities.bottles.Bottle;
-
-import java.util.Scanner;
+import com.khoben.cb.map.GameMap;
 
 /**
  * Created by extle on 19.11.2017.
@@ -12,17 +10,20 @@ import java.util.Scanner;
 
 public class GameMapConsole {
     // Constants
-    final int SCREEN_WIDTH = 20; // Columns
-    final int SCREEN_HEIGHT = 10; // Rows
-    final int SNAKE_STARTING_X = SCREEN_WIDTH / 2;
-    final int SNAKE_STARTING_Y = SCREEN_HEIGHT / 2;
+    final int SCREEN_WIDTH = 50; // Columns
+    final int SCREEN_HEIGHT = 15; // Rows
+    final int PLAYER_X = SCREEN_WIDTH / 2;
+    final int PLAYER_Y = SCREEN_HEIGHT / 2;
 
     GameScreenConsole screen;
     BottleConsole bottle;
     BackgroundConsole background;
     PlayerConsole player;
 
-    public GameMapConsole(){
+    GameMap gameMap;
+
+    public GameMapConsole(GameMap gameMap){
+        gameMap = gameMap;
         screen = new GameScreenConsole(SCREEN_WIDTH,SCREEN_HEIGHT);
         screen.InitScreen();
         background = new BackgroundConsole('#');
@@ -32,7 +33,7 @@ public class GameMapConsole {
         background.addWallsColumn(screen,background,0);
         background.addWallsColumn(screen,background,screen.getScreenWidth() - 1);
 
-        player = new PlayerConsole('X', SNAKE_STARTING_X,SNAKE_STARTING_Y);
+        player = new PlayerConsole('X', PLAYER_X, PLAYER_Y);
         screen.setObjectOnLocation(player,player.getX(),player.getY());
 
         bottle = new BottleConsole('@');
@@ -42,18 +43,21 @@ public class GameMapConsole {
     public void update() {
         // Input from player
 
-        screen.PrintScreen();
             // Get input from player and do something
         if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+            screen.PrintScreen();
             player.moveLeft(screen, player);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
+            screen.PrintScreen();
             player.moveRight(screen, player);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+            screen.PrintScreen();
             player.moveUp(screen, player);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
+            screen.PrintScreen();
             player.moveDown(screen, player);
         }
         }

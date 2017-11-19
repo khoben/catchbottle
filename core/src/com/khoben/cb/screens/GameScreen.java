@@ -15,7 +15,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector3;
 import com.khoben.cb.CatchBottleGame;
 import com.khoben.cb.map.CustomGameMap;
+import com.khoben.cb.patterns.Bridge.Drawer;
+import com.khoben.cb.patterns.Bridge.FakeConsoleDrawer;
+import com.khoben.cb.patterns.Bridge.IDrawable;
+import com.khoben.cb.patterns.Bridge.NormalDrawer;
 import com.khoben.cb.screens.Button.MyButton;
+
 
 
 /**
@@ -40,6 +45,8 @@ public class GameScreen implements Screen, InputProcessor {
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
 
+    Drawer drawer;
+
 
     public enum State{
         Running,
@@ -50,6 +57,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     MyButton menuButton;
 
+    IDrawable normalDrawable;
+    IDrawable fakeConsoleDrawable;
+    boolean selectDrawer;
 
     public GameScreen (CatchBottleGame game) {
 
@@ -74,6 +84,11 @@ public class GameScreen implements Screen, InputProcessor {
         fontW = layout.width;
 
         menuButton = new MyButton("menu.png",w/2 - 175/2, h-78, 175,75);
+        //TODO: Bridge here
+        fakeConsoleDrawable = new FakeConsoleDrawer();
+        normalDrawable = new NormalDrawer(state,game,batch,camera,gameMap,font,fontW,layout,h,menuButton);
+        drawer = new Drawer(normalDrawable);
+        selectDrawer = true;
     }
 
     @Override
@@ -85,32 +100,46 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
+        //TODO: Bridge here
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.P))
+//        {
+//            if (state == State.Paused)
+//            {
+//                state = State.Running;
+//            }
+//            else{
+//                state = State.Paused;
+//            }
+//        }
+//        if (state == state.Running) {
+//            Gdx.gl.glClearColor(1, 0, 0, 1);
+//            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+//            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//            camera.update();
+//            gameMap.update(Gdx.graphics.getDeltaTime());
+//            gameMap.render(camera, batch);
+//            game.batch.begin();
+//            menuButton.draw(game.batch);
+//            game.batch.end();
+//        }
+//        else {
+//            game.batch.begin();
+//            font.draw(game.batch,layout,(camera.viewportWidth - fontW )/2,h/2);
+//            game.batch.end();
+//        }
+        camera.update();
+        gameMap.update(Gdx.graphics.getDeltaTime());
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P))
-        {
-            if (state == State.Paused)
-            {
-                state = State.Running;
-            }
-            else{
-                state = State.Paused;
-            }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X)){
+            selectDrawer = !selectDrawer;
         }
-        if (state == state.Running) {
-            Gdx.gl.glClearColor(1, 0, 0, 1);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            camera.update();
-            gameMap.update(Gdx.graphics.getDeltaTime());
-            gameMap.render(camera, batch);
-            game.batch.begin();
-            menuButton.draw(game.batch);
-            game.batch.end();
+        if (selectDrawer){
+            drawer.setDrawable(normalDrawable);
+            drawer.render();
         }
         else {
-            game.batch.begin();
-            font.draw(game.batch,layout,(camera.viewportWidth - fontW )/2,h/2);
-            game.batch.end();
+            drawer.setDrawable(fakeConsoleDrawable);
+            drawer.render();
         }
     }
 

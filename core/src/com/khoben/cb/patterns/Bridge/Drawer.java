@@ -9,7 +9,7 @@ public class Drawer {
     public Drawer(IDrawable drawable){
         this.drawable = drawable;
     }
-    public void render(){
+    public void render() throws InstantiationException, IllegalAccessException {
         drawable.render();
     }
     public void setDrawable(IDrawable drawable){

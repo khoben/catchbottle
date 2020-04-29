@@ -2,6 +2,7 @@ package com.khoben.cb.patterns.Bridge.FakeConsoleOutput;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.khoben.cb.map.GameMap;
 
 /**
@@ -12,18 +13,22 @@ public class GameMapConsole {
     // Constants
     final int SCREEN_WIDTH = 50; // Columns
     final int SCREEN_HEIGHT = 15; // Rows
-    final int PLAYER_X = SCREEN_WIDTH / 2;
-    final int PLAYER_Y = SCREEN_HEIGHT / 2;
 
     GameScreenConsole screen;
     BottleConsole bottle;
     BackgroundConsole background;
     PlayerConsole player;
 
-    GameMap gameMap;
 
-    public GameMapConsole(GameMap gameMap){
-        gameMap = gameMap;
+    GameMap gameMap;
+    OrthographicCamera camera;
+
+    float ratio_y;
+    float ratio_x;
+
+    public GameMapConsole(GameMap gameMap, OrthographicCamera camera){
+        this.gameMap = gameMap;
+        this.camera = camera;
         screen = new GameScreenConsole(SCREEN_WIDTH,SCREEN_HEIGHT);
         screen.InitScreen();
         background = new BackgroundConsole('#');
@@ -33,11 +38,14 @@ public class GameMapConsole {
         background.addWallsColumn(screen,background,0);
         background.addWallsColumn(screen,background,screen.getScreenWidth() - 1);
 
-        player = new PlayerConsole('X', PLAYER_X, PLAYER_Y);
+        ratio_y = (float)SCREEN_HEIGHT / camera.viewportHeight;
+        ratio_x = (float)SCREEN_WIDTH / camera.viewportWidth;
+
+        player = new PlayerConsole('P', (int)(gameMap.sEntities.player.getX()*ratio_x), (int)(gameMap.sEntities.player.getY()*ratio_y));
         screen.setObjectOnLocation(player,player.getX(),player.getY());
 
-        bottle = new BottleConsole('@');
-        bottle.addRandomFood(screen,bottle);
+//        bottle = new BottleConsole('B');
+//        bottle.addRandomFood(screen,bottle);
     }
 
     public void update() {
@@ -45,20 +53,42 @@ public class GameMapConsole {
 
             // Get input from player and do something
         if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+
             screen.PrintScreen();
-            player.moveLeft(screen, player);
+            //player.moveLeft(screen, player);
+            screen.ClearScreenLocation(player.getX(), player.getY());
+            player.setX((int)(gameMap.sEntities.player.getX()*ratio_x));
+            player.setY((int)(gameMap.sEntities.player.getY()*ratio_y));
+            screen.setObjectOnLocation(player,player.getX(),player.getY());
+
+
+
+            System.out.println(gameMap.sEntities.player.getX()*ratio_x);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
             screen.PrintScreen();
-            player.moveRight(screen, player);
+            //player.moveRight(screen, player);
+            screen.ClearScreenLocation(player.getX(), player.getY());
+            player.setX((int)(gameMap.sEntities.player.getX()*ratio_x));
+            player.setY((int)(gameMap.sEntities.player.getY()*ratio_y));
+            screen.setObjectOnLocation(player,player.getX(),player.getY());
+
+
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             screen.PrintScreen();
-            player.moveUp(screen, player);
+            //player.moveUp(screen, player);
+            screen.ClearScreenLocation(player.getX(), player.getY());
+            player.setX((int)(gameMap.sEntities.player.getX()*ratio_x));
+            player.setY((int)(gameMap.sEntities.player.getY()*ratio_y));
+            screen.setObjectOnLocation(player,player.getX(),player.getY());
+
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
             screen.PrintScreen();
-            player.moveDown(screen, player);
+            //player.moveDown(screen, player);
+            screen.ClearScreenLocation(player.getX(), player.getY());
+            screen.setObjectOnLocation(player,(int)(gameMap.sEntities.player.getX()*ratio_x),(int)(gameMap.sEntities.player.getY()*ratio_y));
         }
         }
 }

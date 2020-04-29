@@ -22,7 +22,7 @@ public class PlayerConsole extends GameObjectConsole {
     public void moveRight(GameScreenConsole screen, PlayerConsole player) {
         player.setX(getX() + 1);
         screen.setObjectOnLocation(player, player.getX(), player.getY());
-        screen.ClearScreenLocation(player.getX() - 1, player.getY());
+        screen.ClearScreenLocation(player.getX(), player.getY());
     }
 
     public void moveUp(GameScreenConsole screen, PlayerConsole player) {

@@ -6,19 +6,24 @@ import com.khoben.cb.entities.players.Player;
 import com.khoben.cb.map.GameMap;
 import com.khoben.cb.patterns.Composite.Component;
 import com.khoben.cb.patterns.Composite.Composite;
+import com.khoben.cb.patterns.Mediator.Colleague;
+import com.khoben.cb.patterns.Mediator.Mediator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Random;
 
 /**
  * Created by extle on 25.10.2017.
  */
 
-public class MidBottle extends Bottle {
+public class MidBottle extends Bottle implements Colleague {
 
     Composite packForMidBottle;
     Random rand;
+    Mediator mediator;
+
+    public boolean isVisible = true;
+
     public void create(Vector2 p, GameMap m)
     {
         packForMidBottle = new Composite();
@@ -32,6 +37,15 @@ public class MidBottle extends Bottle {
         addPoints = 2;
         super.create(EntityType.MIDBOTTLE,p,m);
     }
+
+    public MidBottle(Vector2 p, GameMap m, Mediator mediator, boolean isVisible)
+    {
+        addPoints = 2;
+        this.mediator  = mediator;
+        this.isVisible = isVisible;
+        super.create(EntityType.MIDBOTTLE,p,m);
+    }
+
     public MidBottle(){};
     @Override
     public void createPackBottles() {
@@ -53,7 +67,7 @@ public class MidBottle extends Bottle {
 
 
     public Pair<Bottle,Boolean> doesCollisionWithPlayer(Player p) {
-        return super.doesCollisionWhithPlayer(p);
+        return super.doesCollisionWithPlayer(p);
     }
 
     @Override
@@ -65,4 +79,15 @@ public class MidBottle extends Bottle {
     public void clear() {
     }
 
+
+    @Override
+    public void receive(Colleague c) {
+        isVisible = false;
+    }
+
+    @Override
+    public void send() {
+        isVisible  = true;
+        mediator.send(this);
+    }
 }

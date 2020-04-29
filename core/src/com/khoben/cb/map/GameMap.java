@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.khoben.cb.entities.BottlesFromSky.BottleFromSky;
 import com.khoben.cb.entities.bottles.BigBottle;
 import com.khoben.cb.entities.bottles.Bottle;
 import com.khoben.cb.entities.Entity;
@@ -13,11 +14,16 @@ import com.khoben.cb.entities.EntityType;
 import com.khoben.cb.entities.players.Player;
 import com.khoben.cb.entities.bottles.SmallBottle;
 import com.khoben.cb.patterns.Adapter.Adapter;
+import com.khoben.cb.patterns.Command.OpenGameCommand;
+import com.khoben.cb.patterns.Command.SaveGameCommand;
 import com.khoben.cb.patterns.Composite.Composite;
 import com.khoben.cb.patterns.Facade.SetupEntities;
 import com.khoben.cb.patterns.Iterator.IArray;
 import com.khoben.cb.patterns.Iterator.MyIterator;
+import com.khoben.cb.patterns.Memento.SaveHandler;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 
@@ -28,9 +34,28 @@ import java.util.Random;
 public abstract class GameMap {
 
     public SetupEntities sEntities;
+    public List<BottleFromSky> bottlesFromSky;
+    int collectedBottles;
+
+    OpenGameCommand openGameCommand;
+    SaveGameCommand saveGameCommand;
+
+    public enum GameStatus {
+        IN_PROGRESS,
+        NEXT_LEVEL,
+        ENDED
+    }
+
+
+
+
+
+    public GameStatus gameStatus;
 
     public abstract int getWidth();
+
     public abstract int getHeight();
+
     public abstract int getLayers();
 
 
@@ -43,28 +68,27 @@ public abstract class GameMap {
         sEntities.setup();
     }
 
-    public void render (OrthographicCamera camera, SpriteBatch batch) {
+    public void render(OrthographicCamera camera, SpriteBatch batch) throws InstantiationException, IllegalAccessException {
         //TODO: Iterator
 
         MyIterator<Entity> it = sEntities.entities.getIterator();
-        while (it.hasNext())
-        {
-           it.next().render(batch);
+        while (it.hasNext()) {
+            it.next().render(batch);
         }
         sEntities.mainComposite.render(batch);
     }
 
-    public void update (float delta) {
+    public void update(float delta) {
 
         MyIterator<Entity> it = sEntities.entities.getIterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             it.next().update(delta, -9.8f);
         }
-        sEntities.mainComposite.update(delta,-9.8f);
+        sEntities.mainComposite.update(delta, -9.8f);
+
     }
 
-    public void dispose () {
+    public void dispose() {
 
     }
 
@@ -99,4 +123,17 @@ public abstract class GameMap {
         return this.getHeight() * TileType.TILE_SIZE;
     }
 
+    public void setPoints(int value){
+        collectedBottles = value;
+    }
+
+    public void save(String name) throws IOException {
+        SaveHandler.saveToFile(name,sEntities,bottlesFromSky, collectedBottles);
+    }
+
+    public void load(String name) throws IOException {
+        SaveHandler.loadFromFile(name,sEntities,bottlesFromSky,this,collectedBottles);
+    }
+
+    public abstract int calculatePoints(int pointsForBottle);
 }

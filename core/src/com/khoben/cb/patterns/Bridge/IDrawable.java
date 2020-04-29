@@ -5,5 +5,7 @@ package com.khoben.cb.patterns.Bridge;
  */
 
 public interface IDrawable {
-    void render();
+    void render() throws IllegalAccessException, InstantiationException;
+    void setState(IDrawable state);
+    IDrawable getSomeState(Class classState);
 }

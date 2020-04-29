@@ -8,11 +8,7 @@ import java.util.HashMap;
 
 public enum TileType {
 
-    GRASS(1, true, "Grass"),
-    DIRT(2, true, "Dirt"),
     SKY(3, false, "Sky"),
-    LAVA(4, true, "Lava"),
-    CLOUD(5, true, "Cloud"),
     STONE(6, true, "Stone"),
     BOTTLE(7,false,"Bottle");
 

@@ -2,6 +2,7 @@ package com.khoben.cb.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.khoben.cb.entities.EntitiesStorage.EntitySnapshot;
 import com.khoben.cb.entities.behavour.IJumpAction;
 import com.khoben.cb.entities.behavour.IMoveAction;
 import com.khoben.cb.map.GameMap;
@@ -25,6 +26,16 @@ public abstract class Entity{
         this.pos = pos;
         this.type = type;
         this.map = map;
+    }
+
+    public void create (EntitySnapshot snapshot, EntityType type, GameMap map) {
+        this.pos = new Vector2(snapshot.getX(), snapshot.getY());
+        this.type = type;
+        this.map = map;
+    }
+
+    public EntitySnapshot getSaveSnapshot () {
+        return new EntitySnapshot(type.getId(), pos.x, pos.y);
     }
 
     public void update (float deltaTime, float gravity) {
@@ -63,6 +74,8 @@ public abstract class Entity{
     public Vector2 getPos() {
         return pos;
     }
+
+    public void setPos(Vector2 pos) {this.pos = pos;}
 
     public void setPosX(float x) {
         this.pos.x = x;

@@ -15,25 +15,27 @@ import java.util.Map;
  */
 
 public class FlyweightFactory {
-    private static Map<String,Bottle> hashBottle;
+    private static Map<String, Bottle> hashBottle;
     private GameMap map;
-    private static final Vector2 defaultPos = new Vector2(0,0);
-    public FlyweightFactory(GameMap m){
+    private static final Vector2 defaultPos = new Vector2(0, 0);
+
+    public FlyweightFactory(GameMap m) {
         hashBottle = new HashMap<String, Bottle>();
         map = m;
     }
-    public Bottle getConcreteBottle(String typeBottle){
+
+    public Bottle getConcreteBottle(String typeBottle) {
         Bottle bottle = hashBottle.get(typeBottle);
 
-        if (bottle==null){
-            switch (typeBottle){
+        if (bottle == null) {
+            switch (typeBottle) {
                 case "MidBottle":
-                    bottle = new MidBottle(defaultPos,map);
+                    bottle = new MidBottle(defaultPos, map);
                     break;
                 case "SmallBottle":
-                    bottle = new SmallBottle(defaultPos,map);
+                    bottle = new SmallBottle(defaultPos, map);
             }
-            hashBottle.put(typeBottle,bottle);
+            hashBottle.put(typeBottle, bottle);
         }
         return bottle;
     }

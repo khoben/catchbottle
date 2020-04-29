@@ -6,8 +6,6 @@ import com.khoben.cb.entities.players.Player;
 import com.khoben.cb.map.GameMap;
 import com.khoben.cb.patterns.Composite.Component;
 
-import java.util.List;
-
 /**
  * Created by extle on 25.10.2017.
  */
@@ -28,6 +26,12 @@ public class SmallBottle extends Bottle {
     public void createPackBottles() {
 
     }
+
+    @Override
+    public Component getPack() {
+        return null;
+    }
+
     public SmallBottle(){};
 
     @Override
@@ -36,7 +40,7 @@ public class SmallBottle extends Bottle {
     }
 
     public Pair<Bottle,Boolean> doesCollisionWithPlayer(Player p) {
-        return super.doesCollisionWhithPlayer(p);
+        return super.doesCollisionWithPlayer(p);
     }
 
     @Override
